@@ -1,0 +1,29 @@
+// Import external libraries.
+@import "compass";
+@import "breakpoint";
+@import "singularitygs";
+@import "toolkit";
+
+// Import variables, abstractions, base styles and components using globbing.
+//
+// Globbing will always import files alphabetically. Optimally, all your
+// components should be self-contained and explicit enough to not have any
+// contained styles leak into unrelated components: The import order should not
+// affect the result.
+//
+// If there are variables, functions or mixins that depend on each other and
+// therefore need to be imported in a specific order you can import them
+// directly. Variables-, function- or mixin providing partials should never
+// output any styles themselves: Importing them multiple times to resolve
+// dependencies shouldn't be a problem.
+@import "variables/**/*";
+@import "abstractions/**/*";
+@import "base/**/*";
+@import "components/**/*";
+
+body {
+  // needs latest Compass, add '@import "compass"' to your scss
+  background-color: rgb(21,24,37); // Old browsers
+  @include filter-gradient(#151825, #353f66, vertical); // IE6-9
+  @include background-image(linear-gradient(top, rgba(21,24,37,1) 0%,rgba(53,63,102,1) 100%));
+}

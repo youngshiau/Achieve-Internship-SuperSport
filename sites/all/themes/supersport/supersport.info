@@ -1,0 +1,34 @@
+name = SuperSport
+description = Please provide a description for your theme.
+base theme = omega
+screenshot = screenshot.png
+engine = phptemplate
+core = 7.x
+
+; ========================================
+; Stylesheets
+; ========================================
+stylesheets[all][] = css/supersport.normalize.css
+stylesheets[all][] = css/supersport.hacks.css
+stylesheets[all][] = css/supersport.styles.css
+stylesheets[all][] = css/supersport.no-query.css
+stylesheets[all][] = css/superfish.css
+
+; ========================================
+; Scripts
+; ========================================
+scripts[] = js/supersport.behaviors.js
+scripts[] = js/superfish.js
+
+; ========================================
+; Regions
+; ========================================
+regions[branding] = Branding
+regions[header] = Header
+regions[navigation] = Navigation
+regions[highlighted] = Highlighted
+regions[help] = Help
+regions[content] = Content
+regions[sidebar_first] = First Sidebar
+regions[sidebar_second] = Second Sidebar
+regions[footer] = Footer
