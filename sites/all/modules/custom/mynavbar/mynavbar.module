@@ -1,0 +1,114 @@
+<?php
+
+/**
+ * Declares what blocks are provided by My Navbar.
+ *
+ * Implements hook_block_info().
+ */
+function mynavbar_block_info() {
+  $block['mynavbar'] = array(
+    'info' => t('My Navbar'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $block;
+}
+
+/**
+ * Defines what mynavbar is going to look like.
+ *
+ * Implements hook_block_view().
+ */
+function mynavbar_block_view($delta = '') {
+  $block = array();
+
+  $menu = array();  
+  
+  // Get the tid's for all the sports.
+  $vid = db_query('SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = :machine_name', array(':machine_name' => 'sports'))->fetchField();
+  $sports = db_query('SELECT tid FROM {taxonomy_term_data} WHERE vid = :vid', array(':vid' => $vid))->fetchAll();
+  
+  foreach($sports as $sport) {
+    $sport = $sport->tid;
+    $term = taxonomy_term_load($sport);
+    $term_name = $term->name;
+    $term_uri = taxonomy_term_uri($term);
+    $term_uri = url($term_uri['path']);
+    $menu[$sport]['path'] = '<a href="' . $term_uri . '">' . $term_name . '</a>';
+    $menu[$sport]['leagues'] = array();
+  }
+  
+  // Get the tid's for all the teams.
+  $vid = db_query('SELECT vid FROM {taxonomy_vocabulary} WHERE machine_name = :machine_name', array(':machine_name' => 'teams'))->fetchField();
+  $tid_array = db_query('SELECT tid FROM {taxonomy_term_data} WHERE vid = :vid', array(':vid' => $vid))->fetchAll();
+  
+  foreach($tid_array as $tid) {
+    $tid = $tid->tid;
+    $term = taxonomy_term_load($tid);
+    $term_name = $term->name;
+    $term_uri = taxonomy_term_uri($term);
+    $term_uri = url($term_uri['path']);
+  
+    $field_teams_league = field_get_items('taxonomy_term', $term, 'field_teams_league'); // field_teams_sport
+    if ($field_teams_league) {
+      for($i = 0; $i < count($field_teams_league); $i++) {
+        $league = field_view_value('taxonomy_term', $term, 'field_teams_league', $field_teams_league[$i]);
+        $league_id = $league['#options']['entity']->tid;
+        $sport_ids = $league['#options']['entity']->field_leagues_sport['und'];
+
+        
+        foreach($sport_ids as $sport_id) {
+          $sport_id = $sport_id['tid'];
+          $menu[$sport_id]['leagues'][$league_id]['path'] = render($league);
+          $menu[$sport_id]['leagues'][$league_id]['teams'][$tid] = '<a href="' . $term_uri . '">' . $term_name . '</a>';
+        }
+        
+      }
+    }
+  }
+  
+  
+  echo('<pre>');
+  print_r($menu);
+  echo('</pre>');
+  
+  switch ($delta) {
+    case('mynavbar'):
+      $vars = array(
+        'calendar' => '<a href="' . url('board/calendar') . '"><button>Calendar</button></a>',
+        'board' => '<a href="' . url('board/members') . '"><button>The Board</button></a>',
+        'news' => '<a href="' . url('board/news') . '"><button>News</button></a>',
+        'documents' => '<a href="' . url('view-documents') . '"><button>Documents</button></a>',
+      );
+      $block['subject'] = '';
+      $block['content'] = theme('mynavbar_output', $vars);
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Themes the block using hook_theme to specify a theme function and implements
+ * it using theme_mythemefunction.
+ *
+ * Implements hook_theme().
+ */
+function mynavbar_theme() {
+  global $base_path;
+
+  //theme block with template file
+  return array(
+    'mynavbar_output' => array(
+      'template' => 'output',
+      'path' => drupal_get_path('module', 'mynavbar') . '/templates',
+      'type' => 'theme',
+      'variables' => array(
+        'calendar' => NULL,
+        'board' => NULL,
+        'committees' => NULL,
+        'news' => NULL,
+        'documents' => NULL,
+      ),
+    ),
+  );
+}

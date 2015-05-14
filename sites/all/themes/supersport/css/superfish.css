@@ -70,14 +70,16 @@
 	transition: background .2s;
 }
 .sf-menu ul li {
-	background: #AABDE6;
+	background: black;
 }
 .sf-menu ul ul li {
-	background: #9AAEDB;
+	background: black;
 }
 .sf-menu li:hover,
-.sf-menu li.sfHover {
-	background: #CFDEFF;
+#superfish.sf-menu > li.sfHover {
+	background: black;
+	border-left: 1px solid #3D4051;
+	border-right: 1px solid #3D4051;
 	/* only transition out, not in */
 	-webkit-transition: none;
 	transition: none;

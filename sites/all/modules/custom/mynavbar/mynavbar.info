@@ -1,0 +1,6 @@
+name = MyNavbar
+description = Custom navbar module for SuperSport
+package = SuperSport
+core = 7.x
+
+stylesheets[all][] = mynavbar.css
