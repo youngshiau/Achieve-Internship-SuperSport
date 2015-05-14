@@ -1,0 +1,1 @@
+<div id="mynavbar"><?php print $navbar; ?></div>

@@ -66,18 +66,42 @@ function mynavbar_block_view($delta = '') {
     }
   }
   
-  
-  echo('<pre>');
-  print_r($menu);
-  echo('</pre>');
+  $result = '<ul id="supersport-navbar"><li><a href="' . $GLOBALS['base_path'] . '">Home</a></li><li><a href="#">Sports</a><ul class="level1">';
+  foreach($menu as $sport) {
+    $result .= '<li>';
+    $result .= $sport['path'];
+    
+    if(!empty($sport['leagues'])) {
+      $result .= '<ul class="level2">';
+    }
+    foreach($sport['leagues'] as $league) {
+      $result .= '<li>';
+      $result .= $league['path'];
+      
+      if(!empty($league['teams'])) {
+        $result .= '<ul class="level3">';
+      }
+      foreach($league['teams'] as $team) {
+        $result .= '<li>';
+        $result .= $team;
+        $result .= '</li>';
+      }
+      if(!empty($league['teams'])) {
+        $result .= '</ul>';
+      }
+      $result .= '</li>';
+    }
+    if(!empty($sport['leagues'])) {
+      $result .= '</ul>';
+    }    
+    $result .= '</li>';
+  }   
+  $result .= '</ul></li></ul>'; 
   
   switch ($delta) {
     case('mynavbar'):
       $vars = array(
-        'calendar' => '<a href="' . url('board/calendar') . '"><button>Calendar</button></a>',
-        'board' => '<a href="' . url('board/members') . '"><button>The Board</button></a>',
-        'news' => '<a href="' . url('board/news') . '"><button>News</button></a>',
-        'documents' => '<a href="' . url('view-documents') . '"><button>Documents</button></a>',
+        'navbar' => $result,
       );
       $block['subject'] = '';
       $block['content'] = theme('mynavbar_output', $vars);
@@ -103,11 +127,7 @@ function mynavbar_theme() {
       'path' => drupal_get_path('module', 'mynavbar') . '/templates',
       'type' => 'theme',
       'variables' => array(
-        'calendar' => NULL,
-        'board' => NULL,
-        'committees' => NULL,
-        'news' => NULL,
-        'documents' => NULL,
+        'navbar' => NULL,
       ),
     ),
   );
