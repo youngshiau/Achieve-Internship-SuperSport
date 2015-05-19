@@ -1,0 +1,6 @@
+name = MyCalendar
+description = Custom calendar event module for SuperSport
+package = SuperSport
+core = 7.x
+
+stylesheets[all][] = mycalendar.css

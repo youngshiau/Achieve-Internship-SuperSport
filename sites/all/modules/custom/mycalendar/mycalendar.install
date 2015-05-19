@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Defines the schemas for the tables necessary for the MyCalendar module.
+ */
+
+function mycalendar_schema() {
+  
+  // Table to associate node IDs with Google Calendar Event IDs.
+  $schema['mycalendar_node_event_mappings'] = array(
+    'description' => t('The table that associates node IDs with Google event IDs.'),
+    'fields' => array(
+      'nid' => array(
+        'description' => t('The node ID.'),
+        'type' => 'int',
+        'length' => 11,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'gid' => array(
+        'description' => t('The Google Calendar Event ID.'),
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+    ),
+    
+    // Set the primary key to be the node id.
+    'primary key' => array('nid'),
+  );
+  
+  return $schema;
+}

@@ -1,0 +1,136 @@
+<?php
+require_once './sites/all/libraries/google-api-php-client/src/Google/autoload.php';
+
+/**
+ * This updates the Google Calendar whenever an event is created.
+ *
+ * Implements hook_insert().
+ */
+
+function node_content_insert($node) {
+ 
+  // We only want to insert into the Google calendar for events.
+  if($node->type == 'event') {
+    
+    // Get the OAuth details for this module.
+    $client = gauth_client_get('SuperSport Event Calendar');  
+  
+    // Get the event data.
+    $nid = $node->nid;
+    $url_options = array('absolute' => TRUE);
+    $url = url('node/' . $nid, $url_options);
+    $title = $node->title;
+    $body = $node->body['und'][0]['value'];
+    $time = $node->field_event_date_time['und'][0];
+    $start_time = $time['value'];
+    $end_time = $time['value2'];
+    $time_zone = $time['timezone'];
+    $sport_id = $node->field_event_sport['und'][0]['tid'];
+    $league_id = $node->field_event_league['und'][0]['tid'];
+    $team_id = $node->field_event_team['und'][0]['tid'];
+    
+    $cal = new Google_Service_Calendar($client);
+    if (isset($_GET['logout'])) {
+      unset($_SESSION['token']);
+    }
+    
+    if (isset($_GET['code'])) {
+      $client->authenticate($_GET['code']);
+      $_SESSION['token'] = $client->getAccessToken();
+      header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+    }
+    
+    if (isset($_SESSION['token'])) {
+      $client->setAccessToken($_SESSION['token']);
+    }
+    
+    if ($client->getAccessToken()) {
+      $calList = $cal->calendarList->listCalendarList();
+      // drupal_set_message('<pre>' . print_r($calList, TRUE) . '</pre>');
+          
+    
+      $_SESSION['token'] = $client->getAccessToken();
+    } 
+    else {
+      $authUrl = $client->createAuthUrl();
+      // print "<a class='login' href='$authUrl'>Connect Me!</a>";
+      header('Location: ' . $authUrl);
+    }
+  }
+ 
+  // TODO: Associate $node->nid with the generated Google Event ID in the
+  // mycalendar_node_event_mappings table.
+  // NOTE: For the insert function, I replace 'primary' with calendar ID?
+  // Calendar ID: sd9loui45j580ikedo4ionlirc@group.calendar.google.com
+  
+}
+
+/**
+ * This updates the Google Calendar whenever an event is updated.
+ *
+ * Implements hook_update().
+ */
+
+function node_content_update($node) {
+  
+  // We only want to update the Google calendar for events.
+  if($node->type == 'event') {
+    
+    // Get the OAuth details for this module.
+    $client = gauth_client_get('SuperSport Event Calendar');  
+  
+    // Get the event data.
+    $nid = $node->nid;
+    $url_options = array('absolute' => TRUE);
+    $url = url('node/' . $nid, $url_options);
+    $title = $node->title;
+    $body = $node->body['und'][0]['value'];
+    $time = $node->field_event_date_time['und'][0];
+    $start_time = $time['value'];
+    $end_time = $time['value2'];
+    $time_zone = $time['timezone'];
+    $sport_id = $node->field_event_sport['und'][0]['tid'];
+    $league_id = $node->field_event_league['und'][0]['tid'];
+    $team_id = $node->field_event_team['und'][0]['tid'];
+    
+    
+    $cal = new Google_Service_Calendar($client);
+    if (isset($_GET['logout'])) {
+      unset($_SESSION['token']);
+    }
+    
+    if (isset($_GET['code'])) {
+      $client->authenticate($_GET['code']);
+      $_SESSION['token'] = $client->getAccessToken();
+      header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+    }
+    
+    if (isset($_SESSION['token'])) {
+      $client->setAccessToken($_SESSION['token']);
+    }
+    
+    if ($client->getAccessToken()) {
+      $calList = $cal->calendarList->listCalendarList();
+      // drupal_set_message('<pre>' . print_r($calList, TRUE) . '</pre>');
+          
+    
+      $_SESSION['token'] = $client->getAccessToken();
+    } 
+    else {
+      $authUrl = $client->createAuthUrl();
+      // print "<a class='login' href='$authUrl'>Connect Me!</a>";
+      header('Location: ' . $authUrl);
+    }
+    
+  }
+}
+
+/**
+ * This updates the Google Calendar whenever an event is deleted.
+ *
+ * Implements hook_delete().
+ */
+
+function node_content_delete($node) {
+  
+}
